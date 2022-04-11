@@ -20,6 +20,10 @@ public class VenueController {
         this.venueService = venueService;
     }
 
+    @GetMapping("/")
+    public String index() {
+        return "Welcome to the burger app";
+    }
 
     @GetMapping("/venues")
     public List<Venue> getVenues() throws IOException, InterruptedException {

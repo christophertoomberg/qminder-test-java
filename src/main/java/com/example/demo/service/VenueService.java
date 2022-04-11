@@ -50,12 +50,9 @@ public class VenueService {
 
 
     public Venue getVenueByIdWithAnalyzedPictures(String id) throws IOException, InterruptedException {
-        String pictureRequestUrl = "https://api.foursquare.com/v3/places/"
-                + id
-                + "/photos?sort=NEWEST";
 
         Venue venueDetails = getVenueDetails(id);
-        List<String> venuePicturesData = getPictureUrlsForVenue(pictureRequestUrl);
+        List<String> venuePicturesData = getPictureUrlsForVenue(id);
 
         if (venuePicturesData.isEmpty()) {
             venueDetails.setHamburgerPictureUrl("No pictures for this venue");
@@ -81,9 +78,13 @@ public class VenueService {
     }
 
 
-    private List<String> getPictureUrlsForVenue(String url) throws IOException, InterruptedException {
+    private List<String> getPictureUrlsForVenue(String id) throws IOException, InterruptedException {
 
-        HttpResponse<String> response = makeGetRequest(url);
+        String pictureRequestUrl = "https://api.foursquare.com/v3/places/"
+                + id
+                + "/photos?sort=NEWEST";
+
+        HttpResponse<String> response = makeGetRequest(pictureRequestUrl);
 
         JSONArray jsonArray = new JSONArray(response.body());
         List<String> pictureUrls = new ArrayList<>();
