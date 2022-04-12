@@ -21,10 +21,8 @@ public class VenueService {
     @Value("${apiKey}")
     private String apiKey;
 
-    private static final String VENUES_URL
-            = "https://api.foursquare.com/v3/places/search?query=burger%20joint&ll=58.37%2C26.72&radius=4000";
-    private static final String RECOGNISER_URL
-            = "https://pplkdijj76.execute-api.eu-west-1.amazonaws.com/prod/recognize";
+    private static final String VENUES_URL = "https://api.foursquare.com/v3/places/search?query=burger%20joint&ll=58.37%2C26.72&radius=4000";
+    private static final String RECOGNISER_URL = "https://pplkdijj76.execute-api.eu-west-1.amazonaws.com/prod/recognize";
 
 
     public List<Venue> getVenues() throws IOException, InterruptedException {
@@ -38,8 +36,7 @@ public class VenueService {
             JSONObject venueObject = venueObjects.getJSONObject(i);
             String venueObjectId = venueObject.getString("fsq_id");
 
-            Venue venue = new Venue(
-                    venueObjectId,
+            Venue venue = new Venue(venueObjectId,
                     venueObject.getString("name"),
                     venueObject.getJSONObject("location").getString("formatted_address"));
             venues.add(venue);
@@ -69,10 +66,8 @@ public class VenueService {
         String url = "https://api.foursquare.com/v3/places/" + id;
 
         HttpResponse<String> response = makeGetRequest(url);
-        System.out.println(response.body());
         JSONObject jsonObject = new JSONObject(response.body());
-        return new Venue(
-                jsonObject.getString("fsq_id"),
+        return new Venue(jsonObject.getString("fsq_id"),
                 jsonObject.getString("name"),
                 jsonObject.getJSONObject("location").getString("formatted_address"));
     }
@@ -80,9 +75,7 @@ public class VenueService {
 
     private List<String> getPictureUrlsForVenue(String id) throws IOException, InterruptedException {
 
-        String pictureRequestUrl = "https://api.foursquare.com/v3/places/"
-                + id
-                + "/photos?sort=NEWEST";
+        String pictureRequestUrl = "https://api.foursquare.com/v3/places/" + id + "/photos?sort=NEWEST";
 
         HttpResponse<String> response = makeGetRequest(pictureRequestUrl);
 
@@ -90,7 +83,9 @@ public class VenueService {
         List<String> pictureUrls = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
-            String pictureUrl = jsonObject.getString("prefix") + "original" + jsonObject.getString("suffix");
+            String pictureUrl = jsonObject.getString("prefix") +
+                    "original" +
+                    jsonObject.getString("suffix");
             pictureUrls.add(pictureUrl);
         }
 
@@ -112,21 +107,23 @@ public class VenueService {
 
 
     private HttpResponse<String> makeGetRequest(String url) throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder()
+        HttpRequest request = HttpRequest
+                .newBuilder()
                 .uri(URI.create(url))
                 .header("Accept", "application/json")
                 .header("Authorization", apiKey)
-                .method("GET", HttpRequest.BodyPublishers.noBody())
-                .build();
+                .method("GET", HttpRequest.BodyPublishers.noBody()).build();
+
         return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     private HttpResponse<String> makePostRequest(String body) throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder()
+        HttpRequest request = HttpRequest
+                .newBuilder()
                 .uri(URI.create(VenueService.RECOGNISER_URL))
                 .header("Accept", "application/json")
-                .method("POST", HttpRequest.BodyPublishers.ofString(body))
-                .build();
+                .method("POST", HttpRequest.BodyPublishers.ofString(body)).build();
+
         return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 }
