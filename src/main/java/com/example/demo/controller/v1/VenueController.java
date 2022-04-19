@@ -14,7 +14,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.IOException;
 import java.util.List;
 
-@CrossOrigin(value = "http://localhost:8080")
 @RestController
 public class VenueController {
 
